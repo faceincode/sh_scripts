@@ -5,7 +5,7 @@ sudo apt-get -y update
 # CLI tools
 if ! [ -x "$(command -v vim)" ]; then
   echo "()()>>>> SETTING UP CLI"
-  sudo apt-get install -y man vim npm tmux snapd
+  sudo apt-get install -y man vim npm tmux snapd tldr
   echo "export PATH=\$PATH:/snap/bin" >> ~/.bashrc
 
   sudo apt-get install -y make gcc g++
@@ -25,7 +25,7 @@ fi
 
 # Install Brave
 if ! [ -x "$(command -v brave-browser)" ]; then
-  sudo apt install apt-transport-https curl
+  sudo apt-get install -y apt-transport-https curl
   curl -s https://brave-browser-apt-release.s3.brave.com/brave-core.asc | sudo apt-key --keyring /etc/apt/trusted.gpg.d/brave-browser-release.gpg add -
   echo "deb [arch=amd64] https://brave-browser-apt-release.s3.brave.com/ stable main" | sudo tee /etc/apt/sources.list.d/brave-browser-release.list
   sudo apt-get -y update
@@ -52,7 +52,7 @@ fi
 # Angular
 if ! [ -x "$( command -v ng)"]; then
   echo "()()>>>> INSTALLING ANGULAR" 
-  sudo npm install -y -g @angular/cli
+  sudo npm install -g @angular/cli
 else
   echo "()()>>>> ANGULAR ALREADY INSTALLED" 
 fi
@@ -60,7 +60,7 @@ fi
 # VLC
 if ! [ -x "$( command -v vlc)"]; then
   echo "()()>>>> INSTALLING VLC"
-  sudo snap install -y vlc
+  sudo snap install vlc
 else
   echo "()()>>>> VLC ALREADY INSTALLED"
 fi
