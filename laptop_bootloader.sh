@@ -1,24 +1,24 @@
+# Update
+echo "()()>>>> UPDATING APT-GET..."
+sudo apt-get -y update
+
 # CLI tools
 if ! [ -x "$(command -v vim)" ]; then
   echo "()()>>>> SETTING UP CLI"
-  sudo apt install man
-  sudo apt install vim
-  sudo apt install npm
-  sudo apt install snapd
+  sudo apt-get install -y man vim npm tmux snapd
   echo "export PATH=\$PATH:/snap/bin" >> ~/.bashrc
+
+  sudo apt-get install -y make gcc g++
+  sudo apt-get install -y pig-config libssl-dev libboost-all-dev
 else
   echo "()()>>>> CLI ALREADY SETUP"
 fi
 
-# Update
-echo "()()>>>> UPDATING APT-GET..."
-sudo apt-get update
-
 # Python Installation
 if ! [ -x "$(command -v python3)" ]; then
   echo "()()>>>> INSTALLING PYTHON"
-  sudo apt install python3
-  sudo apt install python3-pip
+  sudo apt-get install -y python3
+  sudo apt-get install -y python3-pip
 else
   python3 --version | xargs echo "()()>>>> PYTHON ALREADY INSTALLED"
 fi
@@ -28,8 +28,8 @@ if ! [ -x "$(command -v brave-browser)" ]; then
   sudo apt install apt-transport-https curl
   curl -s https://brave-browser-apt-release.s3.brave.com/brave-core.asc | sudo apt-key --keyring /etc/apt/trusted.gpg.d/brave-browser-release.gpg add -
   echo "deb [arch=amd64] https://brave-browser-apt-release.s3.brave.com/ stable main" | sudo tee /etc/apt/sources.list.d/brave-browser-release.list
-  sudo apt update
-  sudo apt install brave-browser
+  sudo apt-get -y update
+  sudo apt-get install -y brave-browser
 else
   brave-browser --version | xargs echo "()()>>>> BRAVE BROWSER ALREADY INSTALLED"
 fi
@@ -52,7 +52,7 @@ fi
 # Angular
 if ! [ -x "$( command -v ng)"]; then
   echo "()()>>>> INSTALLING ANGULAR" 
-  sudo npm install -g @angular/cli
+  sudo npm install -y -g @angular/cli
 else
   echo "()()>>>> ANGULAR ALREADY INSTALLED" 
 fi
@@ -60,7 +60,7 @@ fi
 # VLC
 if ! [ -x "$( command -v vlc)"]; then
   echo "()()>>>> INSTALLING VLC"
-  sudo snap install vlc
+  sudo snap install -y vlc
 else
   echo "()()>>>> VLC ALREADY INSTALLED"
 fi
