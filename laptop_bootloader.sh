@@ -10,6 +10,8 @@ if ! [ -x "$(command -v vim)" ]; then
 
   sudo apt-get install -y make gcc g++
   sudo apt-get install -y pig-config libssl-dev libboost-all-dev
+
+  sudo npm -i -g http-server
 else
   echo "()()>>>> CLI ALREADY SETUP"
 fi
