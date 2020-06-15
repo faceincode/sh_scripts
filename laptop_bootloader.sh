@@ -55,8 +55,17 @@ fi
 if ! [ -x "$( command -v ng)"]; then
   echo "()()>>>> INSTALLING ANGULAR" 
   sudo npm install -g @angular/cli
+  sudo npm install angular-in-memory-web-api --save
 else
   echo "()()>>>> ANGULAR ALREADY INSTALLED" 
+fi
+
+# Firebase
+if ! [ -x "$( command -v firebase)"]; then
+  echo "()()>>>> INSTALLING FIREBASE CLI"
+  sudo npm install -g firebase-tools
+else
+  echo "()()>>>> FIREBASE CLI ALREADY INSTALLED"
 fi
 
 # VLC
