@@ -136,11 +136,8 @@ fi
 
 # Open browser on PIA download page
 if [ -x "$(test -n "$(find ~/Downloads -maxdepth 1 -name 'pia*' -print -quit)" )" ]; then
-  echo "()()>>>> DOWNLOADING PIA"
+  echo "()()>>>> PLEASE DOWNLOAD PIA MANUALLY"
   brave-browser https://www.privateinternetaccess.com/installer/download_installer_linux_beta
-
-  echo "()()>>>> SUCCESS: DOWNLOADED PIA"
-  ls ~/Downloads/ | grep pia | xargs -l echo "~/Downloads/"
 else
   echo "()()>>>> PIA ALREADY DOWNLOADED"
   ls ~/Downloads/ | grep pia | xargs -l echo "~/Downloads/"
@@ -152,7 +149,7 @@ if cat "/lib/modprobe.d/nvidia-graphics-drivers.conf" | grep nodeset=1; then
   echo "()()>>>> UPDATING NVIDIA CONFIGURATION"
   sudo sed -i '/options nvidia-drm nodeset=1/coptions nvidia-drm nodeset=0' /lib/modprobe.d/nvidia-graphics-drivers.conf 
 
-  echo "()()>>>> SUCCESS: NVIDIA CONFIGURATION"
+  echo "()()>>>> SUCCESS: NVIDIA CONFIGURED"
   echo "()()>>>> LOCATION: /lib/modprobe.d/nvidia-graphics-drivers.conf"
 else
   echo "()()>>>> NVIDIA CONFIGURATION ALREADY SETUP"
@@ -177,7 +174,7 @@ if ! [ -x "$( command -v firebase)" ]; then
   echo "()()>>>> INSTALLING FIREBASE CLI"
   sudo npm install -g firebase-tools
 
-  firebase --version | xargs echo "()()>>>> FIREBASE CLI ALREADY INSTALLED"
+  firebase --version | xargs echo "()()>>>> SUCCESS: FIREBASE CLI INSTALLED"
   which firebase | xargs echo "()()>>>> LOCATION:"
 else
   firebase --version | xargs echo "()()>>>> FIREBASE CLI ALREADY INSTALLED"
@@ -189,7 +186,7 @@ if ! [ -x "$( command -v vlc)" ]; then
   echo "()()>>>> INSTALLING VLC"
   sudo snap install vlc
 
-  vlc --version | xargs echo "()()>>>> VLC ALREADY INSTALLED"
+  vlc --version | xargs echo "()()>>>> SUCCESS: VLC INSTALLED"
   which vlc | xargs echo "()()>>>> LOCATION:"
 else
   vlc --version | xargs echo "()()>>>> VLC ALREADY INSTALLED"
