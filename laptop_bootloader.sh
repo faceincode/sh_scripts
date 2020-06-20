@@ -5,7 +5,7 @@ sudo apt-get -y update
 # CLI tools
 if ! [ -x "$(command -v vim)" ]; then
   echo "()()>>>> SETTING UP CLI"
-  sudo apt-get install -y man vim npm tmux snapd tldr
+  sudo apt-get install -y npm snapd curl tmux vim man tldr
   echo "export PATH=\$PATH:/snap/bin" >> ~/.bashrc
 
   sudo apt-get install -y make gcc g++
@@ -14,6 +14,81 @@ if ! [ -x "$(command -v vim)" ]; then
   sudo npm -i -g http-server
 else
   echo "()()>>>> CLI ALREADY SETUP"
+fi
+
+# Docker Installation
+# https://docs.docker.com/engine/install/ubuntu/#install-using-the-repository
+if ! [ -x "$(command -v docker)" ]; then
+  echo "()()>>>> PREPARING DOCKER FOR INSTALLATION"
+  sudo apt-get install -y \
+	apt-transport-https \
+	ca-certificates \
+	gnupg-agent \
+	software-properties-common \
+
+  curl -fsSL https://download.docker.com/linux/ubuntu/gpg > docker.asc 
+  
+  # We're going to use GPG to test the docker.asc signature
+  # This verifies that this is an official Docker file before installing it
+  # CLI Command 'add-key' should not be consumed from the stdout
+  if [ $(gpg -n -q --import --import-options import-show docker.asc | grep 9DC858229FC7DD38854AE2D88D81803C0EBFCD88) ]; then
+    echo "()()>>>> INSTALLING DOCKER"
+    sudo apt-key add docker.asc
+    
+    sudo add-apt-repository \
+	"deb [arch=amd64] https://download.docker.com/linux/ubuntu \
+	$(lsb_release -cs) \
+   	stable"
+
+    sudo apt-get update
+
+    # #1 - List docker-ce versions available \
+    # & take the last version (3rd most recent) from the list.
+    # OR 
+    # #2 - Assign any docker version you want to docker_version
+    docker_version=$(apt-cache madison docker-ce | \
+	    tail -n -1 | \
+	    awk -F '|' '{print $2}' | \
+	    sed -e 's/ *//g')
+    echo "$docker_version"
+    
+    sudo apt-get install -y docker-ce=$docker_version docker-ce-cli=$docker_version containerd.io
+
+    echo "()()>>>> ADD USER TO DOCKER GROUP"
+    sudo groupadd docker
+    sudo usermod -aG docker $USER
+
+    # Restart docker group
+    newgrp docker
+
+    echo "()()>>> TEST DOCKER INSTALLATION"
+    sudo docker run hello-world
+
+    # Configure Docker to start on boot
+    sudo systemctl enable docker
+  else
+    echo "()()>>>> DOCKER CHECKSUM INVALID!"
+  fi
+else
+  echo "()()>>>> DOCKER ALREADY INSTALLED"
+  sudo docker run hello-world
+fi
+
+if ! [ -x "$(command -v docker-compose)" ]; then
+  echo "()()>>>> INSTALLING DOCKER COMPOSE"
+  sudo curl -L "https://github.com/docker/compose/releases/download/1.26.0/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+  sudo chmod +x /usr/local/bin/docker-compose
+
+  # if fails try to set PATH
+  # sudo ln -s /usr/local/bin/docker-compose /usr/bin/docker-compose
+
+  echo "()()>>>> DOCKER COMPOSE INSTALLED"
+  which docker-compose
+  docker-compose --version
+else
+  echo "()()>>>> DOCKER COMPOSE IS ALREADY INSTALLED"
+  which docker-compose
+  docker-compose --version
 fi
 
 # Python Installation
