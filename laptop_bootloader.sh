@@ -1,10 +1,10 @@
 # Update
-echo "()()>>>> UPDATING APT-GET..."
+echo "()()>>>> UPDATING APT..."
 sudo apt-get -y update
 
 # CLI tools
 if ! [ -x "$(command -v vim)" ]; then
-  echo "()()>>>> SETTING UP CLI"
+  echo "()()>>>> SETTING UP CORE SYSTEM TOOLS"
   sudo apt-get install -y npm snapd curl tmux vim man tldr
   echo "export PATH=\$PATH:/snap/bin" >> ~/.bashrc
 
@@ -12,8 +12,9 @@ if ! [ -x "$(command -v vim)" ]; then
   sudo apt-get install -y pig-config libssl-dev libboost-all-dev
 
   sudo npm -i -g http-server
+  echo"()()>>>> SUCCESS: CORE SYSTEM TOOLS INSTALLED"
 else
-  echo "()()>>>> CLI ALREADY SETUP"
+  echo "()()>>>> CORE SYSTEM TOOLS ALREADY SETUP"
 fi
 
 # Docker Installation
@@ -66,12 +67,15 @@ if ! [ -x "$(command -v docker)" ]; then
 
     # Configure Docker to start on boot
     sudo systemctl enable docker
+
+    docker --version | xargs echo "()()>>>> SUCCESS: DOCKER INSTALLED"
+    which docker | xargs echo "()()>>>> LOCATION:"
   else
     echo "()()>>>> DOCKER CHECKSUM INVALID!"
   fi
 else
-  echo "()()>>>> DOCKER ALREADY INSTALLED"
-  sudo docker run hello-world
+  docker --version | xargs echo "()()>>>> DOCKER ALREADY INSTALLED"
+  sudo docker run hello-world | xargs echo "()()>>>> LOCATION:"
 fi
 
 if ! [ -x "$(command -v docker-compose)" ]; then
@@ -82,13 +86,11 @@ if ! [ -x "$(command -v docker-compose)" ]; then
   # if fails try to set PATH
   # sudo ln -s /usr/local/bin/docker-compose /usr/bin/docker-compose
 
-  echo "()()>>>> DOCKER COMPOSE INSTALLED"
-  which docker-compose
-  docker-compose --version
+  docker-compose --version | xargs echo "()()>>>> SUCCESS: DOCKER COMPOSE INSTALLED"
+  which docker-compose | xargs echo "()()>>>> LOCATION:"
 else
-  echo "()()>>>> DOCKER COMPOSE IS ALREADY INSTALLED"
-  which docker-compose
-  docker-compose --version
+  docker-compose --version | xargs  echo "()()>>>> DOCKER COMPOSE IS ALREADY INSTALLED"
+  which docker-compose | xargs echo "()()>>>> LOCATION:"
 fi
 
 # Python Installation
@@ -96,9 +98,12 @@ if ! [ -x "$(command -v python3)" ]; then
   echo "()()>>>> INSTALLING PYTHON"
   sudo apt-get install -y python3
   sudo apt-get install -y python3-pip
+
+  python3 --version | xargs echo "()()>>>> SUCCESS: PYTHON INSTALLED"
+  which python3 | xargs echo "()()>>>> LOCATION:"
 else
   python3 --version | xargs echo "()()>>>> PYTHON ALREADY INSTALLED"
-  which python3
+  which python3 | xargs echo "()()>>>> LOCATION:"
 fi
 
 # Install Chrome for Selenium
@@ -106,9 +111,12 @@ if ! [ -x "$(command -v google-chrome)" ]; then
   echo "()()>>>> INSTALLING CHROME"
   wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
   sudo dpkg -i google-chrome-stable_current_amd64.deb
+
+  google-chrome --version | xargs echo "()()>>>> SUCCESS: GOOGLE CHROME INSTALLED"
+  which google-chrome | xargs echo "()()>>>> LOCATION:"
 else
   google-chrome --version | xargs echo "()()>>>> GOOGLE CHROME ALREADY INSTALLED"
-  which google-chrome
+  which google-chrome | xargs echo "()()>>>> LOCATION:"
 fi
 
 # Install Brave
@@ -118,15 +126,21 @@ if ! [ -x "$(command -v brave-browser)" ]; then
   echo "deb [arch=amd64] https://brave-browser-apt-release.s3.brave.com/ stable main" | sudo tee /etc/apt/sources.list.d/brave-browser-release.list
   sudo apt-get -y update
   sudo apt-get install -y brave-browser
+
+  brave-browser --version | xargs echo "()()>>>> SUCCCESS: BRAVE BROWSER INSTALLED"
+  which brave-browser | xargs echo "()()>>>> LOCATION:"
 else
   brave-browser --version | xargs echo "()()>>>> BRAVE BROWSER ALREADY INSTALLED"
-  which brave-browser
+  which brave-browser | xargs echo "()()>>>> LOCATION:"
 fi
 
 # Open browser on PIA download page
 if [ -x "$(test -n "$(find ~/Downloads -maxdepth 1 -name 'pia*' -print -quit)" )" ]; then
-  echo "()()>>>> PLEASE DOWNLOAD PIA"
+  echo "()()>>>> DOWNLOADING PIA"
   brave-browser https://www.privateinternetaccess.com/installer/download_installer_linux_beta
+
+  echo "()()>>>> SUCCESS: DOWNLOADED PIA"
+  ls ~/Downloads/ | grep pia | xargs -l echo "~/Downloads/"
 else
   echo "()()>>>> PIA ALREADY DOWNLOADED"
   ls ~/Downloads/ | grep pia | xargs -l echo "~/Downloads/"
@@ -137,9 +151,12 @@ fi
 if cat "/lib/modprobe.d/nvidia-graphics-drivers.conf" | grep nodeset=1; then
   echo "()()>>>> UPDATING NVIDIA CONFIGURATION"
   sudo sed -i '/options nvidia-drm nodeset=1/coptions nvidia-drm nodeset=0' /lib/modprobe.d/nvidia-graphics-drivers.conf 
+
+  echo "()()>>>> SUCCESS: NVIDIA CONFIGURATION"
+  echo "()()>>>> LOCATION: /lib/modprobe.d/nvidia-graphics-drivers.conf"
 else
   echo "()()>>>> NVIDIA CONFIGURATION ALREADY SETUP"
-  echo "/lib/modprobe.d/nvidia-graphics-drivers.conf"
+  echo "()()>>>> LOCATION: /lib/modprobe.d/nvidia-graphics-drivers.conf"
 fi
 
 # Angular
@@ -147,25 +164,34 @@ if ! [ -x "$( command -v ng)" ]; then
   echo "()()>>>> INSTALLING ANGULAR" 
   sudo npm install -g @angular/cli
   sudo npm install angular-in-memory-web-api --save
+
+  ng --version | xargs echo "()()>>>> SUCCESS: ANGULAR INSTALLED"
+  which ng | xargs echo "()()>>>> LOCATION:"
 else
-  echo "()()>>>> ANGULAR ALREADY INSTALLED"
-  which ng
+  ng --version | xargs echo "()()>>>> ANGULAR ALREADY INSTALLED"
+  which ng | xargs echo "()()>>>> LOCATION:"
 fi
 
 # Firebase
 if ! [ -x "$( command -v firebase)" ]; then
   echo "()()>>>> INSTALLING FIREBASE CLI"
   sudo npm install -g firebase-tools
+
+  firebase --version | xargs echo "()()>>>> FIREBASE CLI ALREADY INSTALLED"
+  which firebase | xargs echo "()()>>>> LOCATION:"
 else
-  echo "()()>>>> FIREBASE CLI ALREADY INSTALLED"
-  which firebase
+  firebase --version | xargs echo "()()>>>> FIREBASE CLI ALREADY INSTALLED"
+  which firebase | xargs echo "()()>>>> LOCATION:"
 fi
 
 # VLC
 if ! [ -x "$( command -v vlc)" ]; then
   echo "()()>>>> INSTALLING VLC"
   sudo snap install vlc
+
+  vlc --version | xargs echo "()()>>>> VLC ALREADY INSTALLED"
+  which vlc | xargs echo "()()>>>> LOCATION:"
 else
-  echo "()()>>>> VLC ALREADY INSTALLED"
-  which vlc
+  vlc --version | xargs echo "()()>>>> VLC ALREADY INSTALLED"
+  which vlc | xargs echo "()()>>>> LOCATION:"
 fi
