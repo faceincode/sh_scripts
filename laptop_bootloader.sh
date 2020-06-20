@@ -23,6 +23,17 @@ if ! [ -x "$(command -v python3)" ]; then
   sudo apt-get install -y python3-pip
 else
   python3 --version | xargs echo "()()>>>> PYTHON ALREADY INSTALLED"
+  which python3
+fi
+
+# Install Chrome for Selenium
+if ! [ -x "$(command -v google-chrome)" ]; then
+  echo "()()>>>> INSTALLING CHROME"
+  wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+  sudo dpkg -i google-chrome-stable_current_amd64.deb
+else
+  google-chrome --version | xargs echo "()()>>>> GOOGLE CHROME ALREADY INSTALLED"
+  which google-chrome
 fi
 
 # Install Brave
@@ -34,6 +45,7 @@ if ! [ -x "$(command -v brave-browser)" ]; then
   sudo apt-get install -y brave-browser
 else
   brave-browser --version | xargs echo "()()>>>> BRAVE BROWSER ALREADY INSTALLED"
+  which brave-browser
 fi
 
 # Open browser on PIA download page
@@ -46,32 +58,39 @@ else
 fi
 
 # Update PopOS monitor configuration
-if [ -f "/lib/modprobe.d/nvidia-graphics-drivers.conf" ]; then
-   echo "()()>>>> UPDATING NVIDIA CONFIGURATION"
-   sudo sed -i '/options nvidia-drm nodeset=1/coptions nvidia-drm nodeset=0' /lib/modprobe.d/nvidia-graphics-drivers.conf 
+# If monitor misbehaves, attempt to adjust physical settings in linux control panel
+if cat "/lib/modprobe.d/nvidia-graphics-drivers.conf" | grep nodeset=1; then
+  echo "()()>>>> UPDATING NVIDIA CONFIGURATION"
+  sudo sed -i '/options nvidia-drm nodeset=1/coptions nvidia-drm nodeset=0' /lib/modprobe.d/nvidia-graphics-drivers.conf 
+else
+  echo "()()>>>> NVIDIA CONFIGURATION ALREADY SETUP"
+  echo "/lib/modprobe.d/nvidia-graphics-drivers.conf"
 fi
 
 # Angular
-if ! [ -x "$( command -v ng)"]; then
+if ! [ -x "$( command -v ng)" ]; then
   echo "()()>>>> INSTALLING ANGULAR" 
   sudo npm install -g @angular/cli
   sudo npm install angular-in-memory-web-api --save
 else
-  echo "()()>>>> ANGULAR ALREADY INSTALLED" 
+  echo "()()>>>> ANGULAR ALREADY INSTALLED"
+  which ng
 fi
 
 # Firebase
-if ! [ -x "$( command -v firebase)"]; then
+if ! [ -x "$( command -v firebase)" ]; then
   echo "()()>>>> INSTALLING FIREBASE CLI"
   sudo npm install -g firebase-tools
 else
   echo "()()>>>> FIREBASE CLI ALREADY INSTALLED"
+  which firebase
 fi
 
 # VLC
-if ! [ -x "$( command -v vlc)"]; then
+if ! [ -x "$( command -v vlc)" ]; then
   echo "()()>>>> INSTALLING VLC"
   sudo snap install vlc
 else
   echo "()()>>>> VLC ALREADY INSTALLED"
+  which vlc
 fi
