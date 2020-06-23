@@ -5,6 +5,13 @@ DB_ANALYTICS_NAME=pg_analytics
 DB_ANALYTICS_VOLUME=$HOME/volumes/pg_analytics/
 DB_ANALYTICS_PORT=5432:5432
 DB_ANALYTICS_ENV=./docker_analytics_db.env
+DB_ANALYTICS_USER=admin
+DB_ANALYTICS_PASSWORD=admin1234
+
+# Workbench build name http://www.sql-workbench.eu/downloads.html
+WORKBENCH_URL=http://www.sql-workbench.eu
+WORKBENCH_ZIP=Workbench-Build125.zip
+WORKBENCH_PATH=$HOME/Downloads/workbench/
 
 if ! [ -d "$VOLUMES" ]; then
   echo "()()>>>> SETTING UP VOLUMES"
@@ -114,11 +121,11 @@ if ! docker ps -a | grep $DB_ANALYTICS_NAME -q; then
     mkdir $DB_ANALYTICS_VOLUME
   fi
 
-  # 1 - Connect to DB using $DB_ANALYTICS_ENV parameters
+  # 1 - Connect to DB @ jdbc:postgresql://localhost:PORT/ + USER/PASSWORD
   # 2 - Put all .csv files in $DB_ANALYTICS_PATH
   # 3 - Load data using SQL:
   # copy table_name() from '/data/file_name.csv' delimiter ',' null as '' csv;
-  docker run --name $DB_ANALYTICS_NAME --env-file $DB_ANALYTICS_ENV -d -p $DB_ANALYTICS_PORT -v $DB_ANALYTICS_PATH:/data postgres
+  docker run --name $DB_ANALYTICS_NAME -e POSTGRES_USER=$DB_ANALYTICS_USER -e POSTGRES_PASSWORD=$DB_ANALYTICS_PASSWORD -d -p $DB_ANALYTICS_PORT -v $DB_ANALYTICS_PATH:/data postgres
 else
   if docker ps -a | grep $DB_ANALYTICS_NAME -q; then
     echo "()()>>>> RESTART POSTGRES - DOCKER - [$DB_ANALYTICS_NAME]"
@@ -126,6 +133,27 @@ else
   else
     echo "()()>>>> POSTGRES - DOCKER [$DB_ANALYTICS_NAME] - ALREADY SETUP."
   fi
+fi
+
+# SQL Workbench
+# TODO #1 - Auto-install the JRE. @ /workbench/download_jre.sh
+# TODO #2 - Auto-download the Postgres JDBC driver
+if ! [ -x "$(command -v sqlworkbench)" ]; then
+  echo "()()>>>> SETTING UP SQL WORKBENCH"
+
+  wget -P $HOME/Downloads/ $WORKBENCH_URL/$WORKBENCH_FILE_NAME
+  unzip $HOME/Downloads/$WORKBENCH_FILE_NAME -d $WORKBENCH_PATH
+  
+  # Make executable and path it to usr/local/bin
+  mv $WORKBENCH_PATH/sqlworkbench.sh $WORKBENCH_PATH/sqlworkbench
+  sudo chmod a+rx $WORKBENCH_PATH/sqlworkbench
+  sudo ln -s $WORKBENCH_PATH/sqlworkbench /usr/local/bin
+
+  sqlworkbench --version | xargs echo "()()>>>> SUCCESS: SQLWORKBENCH INSTALLED"
+  which sqlworkbench | xargs echo "()()>>>> LOCATION:"
+else
+  echo "()()>>>> SQL WORKBENCH ALREADY INSTALLED"
+  which sql_workbench | xargs echo "()()>>>> LOCATION:"
 fi
 
 # Python Installation
