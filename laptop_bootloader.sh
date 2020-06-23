@@ -1,3 +1,16 @@
+VOLUMES=$HOME/volumes/
+
+# Add all files to load into DB @ $HOME/volumes/pg_analytics.
+DB_ANALYTICS_NAME=pg_analytics
+DB_ANALYTICS_VOLUME=$HOME/volumes/pg_analytics/
+DB_ANALYTICS_PORT=5432:5432
+DB_ANALYTICS_ENV=./docker_analytics_db.env
+
+if ! [ -d "$VOLUMES" ]; then
+  echo "()()>>>> SETTING UP VOLUMES"
+  mkdir $VOLUMES
+fi
+
 # Update
 echo "()()>>>> UPDATING APT..."
 sudo apt-get -y update
@@ -91,6 +104,28 @@ if ! [ -x "$(command -v docker-compose)" ]; then
 else
   docker-compose --version | xargs  echo "()()>>>> DOCKER COMPOSE IS ALREADY INSTALLED"
   which docker-compose | xargs echo "()()>>>> LOCATION:"
+fi
+
+# Postgres Analytics DB Setup
+if ! docker ps -a | grep $DB_ANALYTICS_NAME -q; then
+  echo "()()>>>> SETTING UP POSTGRES - DOCKER - [$DB_ANALYTICS_NAME]"
+
+  if ! [ -d $DB_ANALYTICS_VOLUME ]; then
+    mkdir $DB_ANALYTICS_VOLUME
+  fi
+
+  # 1 - Connect to DB using $DB_ANALYTICS_ENV parameters
+  # 2 - Put all .csv files in $DB_ANALYTICS_PATH
+  # 3 - Load data using SQL:
+  # copy table_name() from '/data/file_name.csv' delimiter ',' null as '' csv;
+  docker run --name $DB_ANALYTICS_NAME --env-file $DB_ANALYTICS_ENV -d -p $DB_ANALYTICS_PORT -v $DB_ANALYTICS_PATH:/data postgres
+else
+  if docker ps -a | grep $DB_ANALYTICS_NAME -q; then
+    echo "()()>>>> RESTART POSTGRES - DOCKER - [$DB_ANALYTICS_NAME]"
+    docker restart $DB_ANALYTICS_NAME
+  else
+    echo "()()>>>> POSTGRES - DOCKER [$DB_ANALYTICS_NAME] - ALREADY SETUP."
+  fi
 fi
 
 # Python Installation
