@@ -4,7 +4,6 @@ VOLUMES=$HOME/volumes/
 DB_ANALYTICS_NAME=pg_analytics
 DB_ANALYTICS_VOLUME=$HOME/volumes/pg_analytics/
 DB_ANALYTICS_PORT=5432:5432
-DB_ANALYTICS_ENV=./docker_analytics_db.env
 DB_ANALYTICS_USER=admin
 DB_ANALYTICS_PASSWORD=admin1234
 
